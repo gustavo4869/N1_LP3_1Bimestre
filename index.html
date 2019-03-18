@@ -2,6 +2,7 @@
     <html>
     <head>
         <title>Previsão do Tempo</title>        
+		<meta charset="utf-8" /> 
         <link href = "css/bootstrap.min.css" rel="stylesheet">
         <script src="js/jquery-3.3.1.min.js"></script>
         <script src="js/moment.min.js"></script>
@@ -19,7 +20,7 @@
 
             function carregaPrevisaoAtual(local){
                 html = '';
-                var url = "http://api.apixu.com/v1/current.json?lang=pt&key="+key+"&q="+local.toString();
+                var url = "http://api.apixu.com/v1/current.json?lang=pt&key="+key+"&q="+encodeURIComponent(local.toString());
                 console.log(url);
                 $.ajax({
                   dataType: "json",
@@ -62,7 +63,7 @@
 
             function carregaPrevisaoDia(local, numeroDias){
                 html = '';
-                var url = "http://api.apixu.com/v1/forecast.json?lang=pt&key="+key+"&q="+local.toString()+"&days="+numeroDias.toString();
+                var url = "http://api.apixu.com/v1/forecast.json?lang=pt&key="+key+"&q="+encodeURIComponent(local.toString())+"&days="+numeroDias.toString();				
                 $.ajax({
                   dataType: "json",
                   url: url,
@@ -100,7 +101,8 @@
                                           
                     $("#content").html(html);                    
                     
-                    html += "<div> <h3>Previsão para os próximos "+numeroDias+" dias</h3> ";
+                    html += "<div> <h3>Previsão para os próximos "+numeroDias+" dias</h3> \
+							 <table width=100%>";
                     $.each(result.forecast.forecastday, function() {
                         var forecastDay = $(this);                               
                         var data = moment(forecastDay[0].date.toString()).format("DD/MM/YYYY");
@@ -111,8 +113,7 @@
                         var condicaoClimaticaDia = forecastDay[0].day.condition.text.toString();
                         var condicaoClimaticaIconeDia = forecastDay[0].day.condition.icon.toString();
 
-                        html += "<table width=100%> \
-                                <th>Dia</th> \
+                        html += "<th>Dia</th> \
                                 <th>Temp. Minima</th> \
                                 <th>Temp. Máxima</th> \
                                 <th>Hum. Média</th> \
@@ -127,9 +128,11 @@
                                         <td>"+precipitacaoTotalDia+" mm</td> \
                                         <td>"+condicaoClimaticaDia+"<img id='icone' src='http:"+condicaoClimaticaIconeDia+"'></span></td> \
                                     </tr> \
-                                </tbody> \
-                            </table></div>"; 
+                            "; 
                     });
+					
+					html += "    </tbody> \
+                            </table></div>";
                     
                     $("#content").html(html);  
 
